@@ -1485,6 +1485,10 @@ const rouxHTML =
             return `<${tag} ${attribute}>${content}</${tag}>`;
         }
         return `<${tag}>${content}</${tag}>`;
+    },
+    submit: function (ev)
+    {
+        
     }
 };
 "use strict";
@@ -1705,8 +1709,3 @@ const rouxHandler =
 roux.addProxyHandler("page", rouxHandler.onNavigate, rouxHandler.getCurrentPage);
 roux.run();
 roux.page = "home";
-window.onbeforeunload = ev =>
-{
-    ev.stopPropagation();
-    ev.preventDefault();
-};
