@@ -1705,3 +1705,8 @@ const rouxHandler =
 roux.addProxyHandler("page", rouxHandler.onNavigate, rouxHandler.getCurrentPage);
 roux.run();
 roux.page = "home";
+window.onbeforeunload = ev =>
+{
+    ev.stopPropagation();
+    ev.preventDefault();
+};
