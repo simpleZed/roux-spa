@@ -26,25 +26,23 @@ Repeats an element an x amount of times.
 
 ### _variables
 
->> To use variables.
+> To use variables.
 
 ### @(code)
 
->> To use inline code.
+> To use inline code.
 
-> @{
->     code...
-> }
+## @{ code... }
 
->> To use functions.
+> To use functions.
 
 ## bind="@value"
 
->> Binds an input to a value.
+> Binds an input to a value.
 
 ## bind-mode="html|js|both"
 
->> The mode in which to bind the value.
+> The mode in which to bind the value.
 
 ### HTML
 
