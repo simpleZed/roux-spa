@@ -75,7 +75,8 @@ function read_file(string $file, mixed $options) : array
         if($value)
         {
             $file_with_ext = "{$file}.{$contentType}";
-            $result[$contentType] = file_get_contents("../views/{$contentType}/{$file_with_ext}");
+            $file_path = "../views/{$contentType}/{$file_with_ext}";
+            $result[$contentType] = file_exists($file_path) ? file_get_contents($file_path) : "";
         }
     }
     return $result;
