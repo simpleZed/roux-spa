@@ -48,7 +48,8 @@ function get_component_content(mixed $component,
     $file = get_page($component, $directory);
     if($file !== NULL)
     {
-        return file_get_contents("{$directory}/{$file}");
+        $file_path = "{$directory}/{$file}";
+        return file_exists($file_path) ? file_get_contents($file_path)  : "";
     }
     return "";
 }

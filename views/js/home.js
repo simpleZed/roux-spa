@@ -1,1 +1,0 @@
-scope.message = "Hello, World";
