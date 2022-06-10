@@ -1,4 +1,4 @@
-"use strict";
+"strict mode";
 const rouxPolyfill =
 {
     bootstrap: function ()
@@ -1121,7 +1121,7 @@ execute_binder_${selector}();
     }
 };
 rouxPolyfill.bootstrap();
-"use strict";
+"strict mode";
 const rouxUtils =
 {
     request: function (url, requestInfo)
@@ -1285,7 +1285,7 @@ rouxCache.get = function (key, selector = i => i)
 {
     return selector(rouxCache[key]);
 }
-"use strict";
+"strict mode";
 const tracker =
 {
     page: "",
@@ -1459,7 +1459,7 @@ class FrozenValue
         return this.value;
     }
 };
-"use strict";
+"strict mode";
 const scriptRunner =
 {
     createScript: function (attributes)
@@ -1512,7 +1512,7 @@ const scriptRunner =
                     .join("");
     }
 };
-"use strict";
+"strict mode";
 const rouxRenderer =
 {
     getComponents: function(componentTags)
