@@ -1,0 +1,1 @@
+scope.__render__ = a => console.log(a);

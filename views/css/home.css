@@ -1,0 +1,7 @@
+canvas
+{
+    border: 5px solid black;
+    cursor: pointer;
+    width: 20rem;
+    height: 20rem;
+}
