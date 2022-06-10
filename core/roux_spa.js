@@ -1012,6 +1012,8 @@ execute_code_${selector}();
         {
             Element.prototype.createBinder = function (binderOptions, selector)
             {
+                const io = Math.nextWord(32);
+                this.setAttribute(io, false);
                 const variable = binderOptions.replaceAll('@', '');
                 const code = binderOptions.replaceAll("@", "scope.").asJson();
                 const bindMode = this.hasAttribute("bind-mode") ? this.getAttribute("bind-mode")
@@ -1024,6 +1026,7 @@ execute_code_${selector}();
             converter(app.querySelectorAll("[${selector}='']"))
                 .forEach(e =>
                 {
+                    let timeoutId = undefined;
                     switch("${bindMode}")
                     {
                         case "html":
@@ -1031,7 +1034,16 @@ execute_code_${selector}();
                             {
                                 ev.stopPropagation();
                                 ev.preventDefault();
-                                scope["${variable}"] = e.value;
+                                if(!ev.target["${io}"])
+                                {
+                                    timeoutId = setTimeout(() =>
+                                    {
+                                        scope["${variable}"] = e.value;
+                                        ev.target["${io}"] = false;
+                                        clearTimeout(timeoutId);
+                                    }, 5_000);
+                                    ev.target["${io}"] = true;
+                                }
                             };
                             break;
                         case "js":
@@ -1044,7 +1056,16 @@ execute_code_${selector}();
                             {
                                 ev.stopPropagation();
                                 ev.preventDefault();
-                                scope["${variable}"] = e.value;
+                                if(!ev.target["${io}"])
+                                {
+                                    timeoutId = setTimeout(() =>
+                                    {
+                                        scope["${variable}"] = e.value;
+                                        ev.target["${io}"] = false;
+                                        clearTimeout(timeoutId);
+                                    }, 5_000);
+                                    ev.target["${io}"] = true;
+                                }
                             };
                             break;
                     }
@@ -1162,14 +1183,34 @@ const rouxCodeGenerator =
 {
     generateHandlerCode: function (f, parameters)
     {
-        return `tracker.onValueChanged.combine(parameters =>
+        return `if(rouxCodeGenerator.hasGlobalVariables(variableNames))
+{
+    tracker.onGlobalValueChanged.combine(parameters =>
+    {
+        const variable = "scope." + parameters.name;
+        if(variableNames.includes(variable))
         {
-            const variable = "scope." + parameters.name;
-            if(parameters.page === "${tracker.page}" && variableNames.includes(variable))
-            {
-                ${f}(${parameters});
-            }
-        });`;
+            ${f}(${parameters});
+        }
+    });
+}
+tracker.onValueChanged.combine(parameters =>
+{
+    const variable = "scope." + parameters.name;
+    if(parameters.page === "${tracker.page}" && variableNames.includes(variable))
+    {
+        ${f}(${parameters});
+    }
+});
+`;
+    },
+    hasGlobalVariables: function (variableNames)
+    {
+        return variableNames.includes("scope.$");
+    },
+    isGlobalVariable: function (variableNames)
+    {
+        return variableNames.startsWith("$");
     },
     generateReplaceCode: function (text, value, all = true)
     {
@@ -1471,26 +1512,6 @@ const scriptRunner =
                     .join("");
     }
 };
-"strict mode";
-const rouxHTML =
-{
-    render: function (tag, content, attributes = null)
-    {
-        if (Object.exists(attributes))
-        {
-            const attribute = attributes?.keys()
-                                        ?.zip(attributes.values(),
-                                            (k, v) => `${k}="${v}"`)
-                                        ?.join("");
-            return `<${tag} ${attribute}>${content}</${tag}>`;
-        }
-        return `<${tag}>${content}</${tag}>`;
-    },
-    submit: function (ev)
-    {
-        
-    }
-};
 "use strict";
 const rouxRenderer =
 {
@@ -1591,7 +1612,7 @@ const rouxRenderer =
                                         .join("")
                                         .append(`app.hidden = false;`);
             const generatedName = Math.nextWord(32);
-                const code = `"strict mode";
+            const code = `"strict mode";
 const function_${generatedName} = scope =>
 {
     tracker.globals.forEach(g =>
