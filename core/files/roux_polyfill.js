@@ -80,7 +80,7 @@ const rouxPolyfill =
             Object.prototype.subscribe = function (handler, track = true)
             {
                 this.keys()
-                    .filter(k => !["__runAfter__", "__runBefore__", "page"].includes(k))
+                    .filter(k => !["__runAfter__", "__runBefore__", "__render__", "page"].includes(k))
                     .forEach(k =>
                     {
                         const value = this[k];
@@ -109,7 +109,7 @@ const rouxPolyfill =
             Object.prototype.unsubscribe = function ()
             {
                 this.keys()
-                    .filter(k => !["__runAfter__", "__runBefore__", "page"].includes(k))
+                    .filter(k => !["__runAfter__", "__runBefore__", "__render__", "page"].includes(k))
                     .forEach(k =>
                     {
                         if (!k.startsWith("$"))

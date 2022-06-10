@@ -112,6 +112,10 @@ const function_${generatedName} = scope =>
         scope.__runBefore__();
     }
     ${afterScript}
+    if(scope.__render__)
+    {
+        scope.__render__(app);
+    }
     if(scope.__runAfter__)
     {
         scope.__runAfter__();
