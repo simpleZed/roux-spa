@@ -60,14 +60,34 @@ const rouxCodeGenerator =
 {
     generateHandlerCode: function (f, parameters)
     {
-        return `tracker.onValueChanged.combine(parameters =>
+        return `if(rouxCodeGenerator.hasGlobalVariables(variableNames))
+{
+    tracker.onGlobalValueChanged.combine(parameters =>
+    {
+        const variable = "scope." + parameters.name;
+        if(variableNames.includes(variable))
         {
-            const variable = "scope." + parameters.name;
-            if(parameters.page === "${tracker.page}" && variableNames.includes(variable))
-            {
-                ${f}(${parameters});
-            }
-        });`;
+            ${f}(${parameters});
+        }
+    });
+}
+tracker.onValueChanged.combine(parameters =>
+{
+    const variable = "scope." + parameters.name;
+    if(parameters.page === "${tracker.page}" && variableNames.includes(variable))
+    {
+        ${f}(${parameters});
+    }
+});
+`;
+    },
+    hasGlobalVariables: function (variableNames)
+    {
+        return variableNames.includes("scope.$");
+    },
+    isGlobalVariable: function (variableNames)
+    {
+        return variableNames.startsWith("$");
     },
     generateReplaceCode: function (text, value, all = true)
     {

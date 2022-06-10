@@ -1012,6 +1012,8 @@ execute_code_${selector}();
         {
             Element.prototype.createBinder = function (binderOptions, selector)
             {
+                const io = Math.nextWord(32);
+                this.setAttribute(io, false);
                 const variable = binderOptions.replaceAll('@', '');
                 const code = binderOptions.replaceAll("@", "scope.").asJson();
                 const bindMode = this.hasAttribute("bind-mode") ? this.getAttribute("bind-mode")
@@ -1024,6 +1026,7 @@ execute_code_${selector}();
             converter(app.querySelectorAll("[${selector}='']"))
                 .forEach(e =>
                 {
+                    let timeoutId = undefined;
                     switch("${bindMode}")
                     {
                         case "html":
@@ -1031,7 +1034,16 @@ execute_code_${selector}();
                             {
                                 ev.stopPropagation();
                                 ev.preventDefault();
-                                scope["${variable}"] = e.value;
+                                if(!ev.target["${io}"])
+                                {
+                                    timeoutId = setTimeout(() =>
+                                    {
+                                        scope["${variable}"] = e.value;
+                                        ev.target["${io}"] = false;
+                                        clearTimeout(timeoutId);
+                                    }, 5_000);
+                                    ev.target["${io}"] = true;
+                                }
                             };
                             break;
                         case "js":
@@ -1044,7 +1056,16 @@ execute_code_${selector}();
                             {
                                 ev.stopPropagation();
                                 ev.preventDefault();
-                                scope["${variable}"] = e.value;
+                                if(!ev.target["${io}"])
+                                {
+                                    timeoutId = setTimeout(() =>
+                                    {
+                                        scope["${variable}"] = e.value;
+                                        ev.target["${io}"] = false;
+                                        clearTimeout(timeoutId);
+                                    }, 5_000);
+                                    ev.target["${io}"] = true;
+                                }
                             };
                             break;
                     }
