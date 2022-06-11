@@ -1605,10 +1605,9 @@ const rouxRenderer =
                                         .filter(t => t.attribute.some(t => t))
                                         .groupBy(t => t.tag.outerHTML)
                                         .flatMap(g => scriptRunner.createScript(g.groups))
-                                        .join("")
-                                        .append(`app.hidden = false;`);
+                                        .join("");
             const generatedName = Math.nextWord(32);
-            const code = `"strict mode";
+            const code = `"use strict";
 const function_${generatedName} = scope =>
 {
     tracker.globals.forEach(g =>
@@ -1630,6 +1629,7 @@ const function_${generatedName} = scope =>
     {
         scope.__runAfter__();
     }
+    app.hidden = false;
 }
 function_${generatedName}(Object({ page: "${tracker.page}" }));`;
                 code.eval();
