@@ -1,4 +1,4 @@
-"strict mode";
+"use strict";
 const rouxDOM =
 {
     createElement: function (tag, content, attributeBuilder = null)
@@ -596,9 +596,65 @@ const rouxBinder =
 };
 const rouxApp =
 {
-    render: function (html)
+    render: function (html, root = null)
     {
-        console.log(html);
-        this.keys().forEach(k => console.log(k));
+        return new Promise((res, rej) =>
+        {
+            try
+            {
+                const position = Object.exists(root) ? "afterBegin" : "afterEnd";
+                root ??= app.querySelector("style");
+                const identifier = Math.nextWord(32);
+                this.parse(html)
+                    .then(r => root.insertAdjacentHTML(position, `<div ${identifier}>${r}</div>`))
+                    .then(() =>
+                    {
+                        const element = app.querySelector(`[${identifier}='']`);
+                        return scriptRunner.generateCode(element);
+                    })
+                    .then(c => res(c));
+            }
+            catch (ex)
+            {
+                console.error(ex);
+                console.warn("Could not render.");
+                rej(ex);
+            }
+        });
+    },
+    parse: function (html)
+    {
+        return new Promise((res, rej) =>
+        {
+            try
+            {
+                const temp = document.createElement("div");
+                temp.insertAdjacentHTML("afterbegin", html);
+                const result = converter(temp.querySelectorAll("*"))
+                                    .map(e =>
+                                    {
+                                        const fnName = rouxApp.keys()
+                                                              .filter(k => !["parse", "render"].includes(k))
+                                                              .oneOf(k => k.toLowerCase() === e.tagName.toLowerCase());
+                                        if (fnName)
+                                        {
+                                            const obj = {};
+                                            e.getAttributeNames()
+                                             .forEach(n => obj[n] = e.getAttribute(n));
+                                            const result = rouxApp[fnName](obj);
+                                            return Object.exists(result) ? result : "";
+                                        }
+                                        return e.outerHTML;
+                                    })
+                                    .join("");
+                res(result);
+            }
+            catch (ex)
+            {
+                console.error(ex);
+                console.warn("Couldn't parse the provided html.");
+                rej(ex);
+            }
+        });
     }
 };
