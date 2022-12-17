@@ -34,7 +34,7 @@ function request_is_oneOf(array $request, array $verbs) : bool
                return strtoupper($v);
            }));
 }
-function request_on(string $verb, callable $callable) : mixed
+function request_on(string $verb, callable $callable)
 {
     if(request_is_https($_SERVER) && request_is($_SERVER, $verb))
     {
@@ -42,7 +42,7 @@ function request_on(string $verb, callable $callable) : mixed
     }
     return NULL;
 }
-function request_on_oneOf(array $verbs, callable $callable) : mixed
+function request_on_oneOf(array $verbs, callable $callable)
 {
     if (request_is_https($_SERVER) && request_is_oneOf($_SERVER, $verbs))
     {
@@ -50,7 +50,7 @@ function request_on_oneOf(array $verbs, callable $callable) : mixed
     }
     return NULL;
 }
-function execute_server_code(callable $callable) : mixed
+function execute_server_code(callable $callable)
 {
     $response = NULL;
     if(request_has_same_origin($_SERVER) || $_SERVER["REMOTE_ADDR"] === "127.0.0.1")

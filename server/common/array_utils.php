@@ -6,7 +6,7 @@ declare(strict_types = 1);
  * @param callable the function that specify the requirement.
  * @return mixed the item found in the array.
  */
-function array_find(array $array, callable $callable) : mixed
+function array_find(array $array, callable $callable)
 {
     foreach ($array as $value)
     {
