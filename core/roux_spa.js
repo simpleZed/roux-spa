@@ -1608,6 +1608,14 @@ const rouxRenderer =
                                         .join("");
             const generatedName = Math.nextWord(32);
             const code = `"use strict";
+const component =
+{
+    render: (content, evaluate = true) =>
+    {
+        return evaluate ? rouxApp.render(content).then(r => eval(r))
+                        : rouxApp.render(content);
+    }
+};
 const function_${generatedName} = scope =>
 {
     tracker.globals.forEach(g =>
